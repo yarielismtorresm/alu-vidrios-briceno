@@ -1,19 +1,21 @@
 @import "tailwindcss";
 
 @theme {
-    --color-avb-blue: #0d47a1;
+    /* Tipografía Corporativa */
+    --font-sans:
+        "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+
+    /* Paleta de Colores Alu Vidrios Briceño (AVB) */
+    --color-avb-blue: #0d47a1; /* Azul Corporativo Principal */
+    --color-avb-dark: #1f2937; /* Texto Principal / Perfilería */
+    --color-avb-bg: #f8fafc; /* Fondo Neutro Claro (slate-50) */
+    --color-avb-emerald: #10b981; /* Acentos / Estados / WhatsApp */
 }
 
 body {
-    background-color: #f8fafc;
-    color: #1f2937;
-    font-family:
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        Roboto,
-        sans-serif;
+    background-color: var(--color-avb-bg);
+    color: var(--color-avb-dark);
+    font-family: var(--font-sans);
     margin: 0;
     min-height: 100vh;
 }
