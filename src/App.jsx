@@ -1,6 +1,7 @@
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import CardProducto from "./components/CardProducto";
+import Footer from "./components/Footer";
 
 // Datos de prueba para mostrar las tarjetas
 const obrasEjemplo = [
@@ -74,6 +75,9 @@ function App() {
             />
           ))}
         </div>
+
+        {/* 4. Footer Institucional */}
+        <Footer />
       </main>
     </div>
   );
