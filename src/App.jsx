@@ -75,10 +75,10 @@ function App() {
             />
           ))}
         </div>
-
-        {/* 4. Footer Institucional */}
-        <Footer />
       </main>
+
+      {/* 4. Footer Institucional */}
+      <Footer />
     </div>
   );
 }
