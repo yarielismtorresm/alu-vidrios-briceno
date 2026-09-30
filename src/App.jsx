@@ -2,6 +2,8 @@ import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import CardProducto from "./components/CardProducto";
 import Footer from "./components/Footer";
+import { useState } from "react";
+import FiltrosCategoria from "./components/FiltrosCategoria";
 
 // Datos de prueba para mostrar las tarjetas
 const obrasEjemplo = [
@@ -32,9 +34,42 @@ const obrasEjemplo = [
     imagen:
       "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80",
   },
+  {
+    id: 4,
+    nombre: "Mampara de Ducha en Vidrio Templado",
+    categoria: "Mamparas",
+    descripcion:
+      "Mampara fija y corrediza con vidrio de seguridad de 8mm y herrajes en acero inoxidable.",
+    imagen:
+      "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=800&q=80",
+  },
+  {
+    id: 5,
+    nombre: "Fachada Integral Panorámica",
+    categoria: "Fachadas",
+    descripcion:
+      "Estructura comercial en vidrio reflectivo de control solar con sistema de fijación spider.",
+    imagen:
+      "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80",
+  },
 ];
 
 function App() {
+  // 1. Estado para la categoría seleccionada
+  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState("Todas");
+
+  // 2. Extraer categorias únicas dinámicamente a partir de las obras
+  const listaCategorias = [
+    "Todas",
+    ...new Set(obrasEjemplo.map((obra) => obra.categoria)),
+  ];
+
+  // 3. Filtrar obras según la categoría seleccionada
+  const obrasFiltradas =
+    categoriaSeleccionada === "Todas"
+      ? obrasEjemplo
+      : obrasEjemplo.filter((obra) => obra.categoria === categoriaSeleccionada);
+
   return (
     <div className="min-h-screen bg-avb-bg text-avb-dark font-sans flex flex-col">
       {/* 1. Barra de Navegación */}
@@ -62,19 +97,33 @@ function App() {
           </p>
         </div>
 
+        {/* 4. Filtro de Categorías */}
+        <FiltrosCategoria
+          categorias={listaCategorias}
+          categoriaSeleccionada={categoriaSeleccionada}
+          onSeleccionarCategoria={setCategoriaSeleccionada}
+        />
+
         {/* Cuadrícula Responsiva de Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {obrasEjemplo.map((obra) => (
-            <CardProducto
-              key={obra.id}
-              nombre={obra.nombre}
-              categoria={obra.categoria}
-              referencia={obra.referencia}
-              descripcion={obra.descripcion}
-              imagen={obra.imagen}
-            />
-          ))}
-        </div>
+        {obrasFiltradas.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {obrasFiltradas.map((obra) => (
+              <CardProducto
+                key={obra.id}
+                nombre={obra.nombre}
+                categoria={obra.categoria}
+                descripcion={obra.descripcion}
+                imagen={obra.imagen}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12 bg-white rounded-2xl border border-slate-200">
+            <p className="text-slate-500 text-sm">
+              No se encontraron obras disponibles en esta categoría.
+            </p>
+          </div>
+        )}
       </main>
 
       {/* 4. Footer Institucional */}
