@@ -1,3 +1,5 @@
+import { obtenerUrlWhatsAppAsesoria } from "../utils/whatsapp";
+
 export default function Hero() {
   return (
     <section
@@ -33,7 +35,7 @@ export default function Hero() {
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
               {/* Botón Principal: Conversión WhatsApp */}
               <a
-                href="https://wa.me/584120000000?text=Hola,%20deseo%20solicitar%20asesoría%20para%20un%20proyecto%20arquitectónico%20a%20medida"
+                href={obtenerUrlWhatsAppAsesoria()}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-6 py-3.5 rounded-xl shadow-md transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
@@ -43,6 +45,7 @@ export default function Hero() {
                 </svg>
                 <span>Solicitar Asesoría</span>
               </a>
+
 
               {/* Botón Secundario: Explorar Catálogo */}
               <a

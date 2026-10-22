@@ -1,10 +1,12 @@
+import { obtenerUrlWhatsAppConsulta } from "../utils/whatsapp";
+
 export default function CardProducto({ obra, onVerDetalle }) {
   const { nombre, categoria, imagen, descripcion, especificaciones } = obra;
 
   const mensajeWhatsApp = encodeURIComponent(
     `Hola, deseo solicitar información sobre la obra: ${nombre}`
   );
-  const urlWhatsApp = `https://wa.me/584120000000?text=${mensajeWhatsApp}`;
+  const urlWhatsApp = obtenerUrlWhatsAppConsulta(nombre);
 
   return (
     <article className="group bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs hover:shadow-xl hover:border-slate-300 transition-all duration-300 flex flex-col h-full">
