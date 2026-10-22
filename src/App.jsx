@@ -2,9 +2,10 @@ import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import CardProducto from "./components/CardProducto";
 import Footer from "./components/Footer";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import FiltrosCategoria from "./components/FiltrosCategoria";
 import FichaTecnica from "./components/FichaTecnica";
+import LoginAdmin from "./components/LoginAdmin";
 
 // Catálogo de obras oficiales AVB (Sin referencias ni SKUs)
 const obrasEjemplo = [
@@ -236,6 +237,39 @@ function App() {
       ? obrasEjemplo
       : obrasEjemplo.filter((obra) => obra.categoria === categoriaSeleccionada);
 
+  // Detección automática si la URL es /admin o #admin
+  const [esRutaAdmin, setEsRutaAdmin] = useState(
+    window.location.pathname === "/admin" || window.location.hash === "#admin"
+  );
+
+  useEffect(() => {
+    const handleLocationChange = () => {
+      setEsRutaAdmin(
+        window.location.pathname === "/admin" || window.location.hash === "#admin"
+      );
+    };
+
+    window.addEventListener("popstate", handleLocationChange);
+    window.addEventListener("hashchange", handleLocationChange);
+
+    return () => {
+      window.removeEventListener("popstate", handleLocationChange);
+      window.removeEventListener("hashchange", handleLocationChange);
+    };
+  }, []);
+
+
+  // Si la URL es /admin o #admin, se muestra exclusivamente la pantalla de Login
+  if (esRutaAdmin) {
+    return (
+      <LoginAdmin
+        onLoginSuccess={() => {
+          alert("¡Credenciales correctas! Bienvenido al Panel Administrativo.");
+        }}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-avb-bg text-avb-dark font-sans flex flex-col">
       {/* 1. Barra de Navegación */}
@@ -302,6 +336,7 @@ function App() {
       </main>
     </>
           )}
+
 
           {/* 3. Footer Institucional */}
           <Footer />
