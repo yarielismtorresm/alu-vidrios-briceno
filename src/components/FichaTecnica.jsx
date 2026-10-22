@@ -1,5 +1,10 @@
 import { useState, useEffect } from "react";
 
+import {
+  obtenerMensajeFichaTecnica,
+  obtenerUrlWhatsAppFicha,
+} from "../utils/whatsapp";
+
 export default function FichaTecnica({
   obra,
   todasLasObras = [],
@@ -26,11 +31,17 @@ export default function FichaTecnica({
     obra.espesores?.[0] || "8MM TEMPLADO NCH135"
   );
 
-  // Mensaje dinámico sin código de referencia
-  const mensajeWhatsApp = encodeURIComponent(
-    `Hola Norma Matheus / Alu Vidrios Briceño, me interesa cotizar la obra "${obra.nombre}". Formato: ${formatoSeleccionado}, Espesor: ${espesorSeleccionado}. ¿Podría brindarme asesoría técnica y coordinar una visita para toma de medidas en mi domicilio?`
+  // Construcción del mensaje y URL dinámicos mediante el helper centralizado
+  const textoMensajeEnVivo = obtenerMensajeFichaTecnica(
+    obra.nombre,
+    formatoSeleccionado,
+    espesorSeleccionado
   );
-  const urlWhatsApp = `https://wa.me/584120000000?text=${mensajeWhatsApp}`;
+  const urlWhatsApp = obtenerUrlWhatsAppFicha(
+    obra.nombre,
+    formatoSeleccionado,
+    espesorSeleccionado
+  );
 
   const obrasRelacionadas = todasLasObras
     .filter((item) => item.id !== obra.id)
@@ -258,7 +269,7 @@ export default function FichaTecnica({
                   // Mensaje automático para taller AVB:
                 </span>
                 <p className="text-xs italic text-slate-700 leading-relaxed">
-                  "Hola Norma Matheus / Alu Vidrios Briceño, me interesa cotizar la obra {obra.nombre}. Formato: {formatoSeleccionado}, Espesor: {espesorSeleccionado}. ¿Podría brindarme asesoría técnica y coordinar una visita para toma de medidas en mi domicilio?"
+                  "{textoMensajeEnVivo}"
                 </p>
               </div>
 
