@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import FiltrosCategoria from "./components/FiltrosCategoria";
 import FichaTecnica from "./components/FichaTecnica";
 import LoginAdmin from "./components/LoginAdmin";
+import ResumenAdmin from "./components/ResumenAdmin";
 
 // Catálogo de obras oficiales AVB (Sin referencias ni SKUs)
 const obrasEjemplo = [
@@ -242,6 +243,9 @@ function App() {
     window.location.pathname === "/admin" || window.location.hash === "#admin"
   );
 
+  // Estado estaAutenticado
+  const [estaAutenticado, setEstaAutenticado] = useState(false);
+
   useEffect(() => {
     const handleLocationChange = () => {
       setEsRutaAdmin(
@@ -261,14 +265,28 @@ function App() {
 
   // Si la URL es /admin o #admin, se muestra exclusivamente la pantalla de Login
   if (esRutaAdmin) {
+    if (!estaAutenticado) {
     return (
       <LoginAdmin
         onLoginSuccess={() => {
-          alert("¡Credenciales correctas! Bienvenido al Panel Administrativo.");
+          setEstaAutenticado(true);
         }}
       />
     );
   }
+
+  return (
+   <ResumenAdmin
+     obras={obrasEjemplo}
+     onLogout={() => setEstaAutenticado(false)}
+     onVerSitioPublico={() => {
+        window.location.hash = "";
+        setEsRutaAdmin(false);
+      }}
+    />
+   );
+ }
+
 
   return (
     <div className="min-h-screen bg-avb-bg text-avb-dark font-sans flex flex-col">

@@ -3,8 +3,8 @@
  * Taller Central: Valera, Trujillo, Venezuela
  */
 export const WHATSAPP_CONFIG = {
-  telefono: "584147509062", // Número oficial con código de país
-  telefonoVisible: "+58 414 7509062",
+  telefono: "584164431719", // Número oficial con código de país
+  telefonoVisible: "+58 416 4431719",
   contacto: "Norma Matheus",
   empresa: "Alu Vidrios Briceño",
 };
