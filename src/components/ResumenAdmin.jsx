@@ -1,9 +1,13 @@
 import { useState } from "react";
 import logoAvb from "../assets/logo-avb.png";
 import { WHATSAPP_CONFIG } from "../utils/whatsapp";
+import FormularioObra from "./FormularioObra";
+
+// Abrir el modal y recibir props para crear/editar
 
 export default function ResumenAdmin({
   obras = [],
+  onGuardarObra,
   onLogout,
   onVerSitioPublico,
 }) {
@@ -11,10 +15,28 @@ export default function ResumenAdmin({
   const [seccionActiva, setSeccionActiva] = useState("dashboard");
   const [menuMovilAbierto, setMenuMovilAbierto] = useState(false);
 
+  // Estados para el Modal de Formulario
+    const [formularioAbierto, setFormularioAbierto] = useState(false);
+    const [obraEnEdicion, setObraEnEdicion] = useState(null);
+
+  // Estados de Búsqueda y Filtros en la vista de Catálogo
+  const [busqueda, setBusqueda] = useState("");
+  const [categoriaFiltro, setCategoriaFiltro] = useState("Todas");
+
   // Cálculos dinámicos reales del catálogo
   const totalObras = obras.length;
   const listaCategorias = [...new Set(obras.map((o) => o.categoria))];
   const totalCategorias = listaCategorias.length;
+
+  // Filtrado de obras para la tabla de productos
+  const obrasFiltradas = obras.filter((obra) => {
+    const coincideNombre = obra.nombre
+      .toLowerCase()
+      .includes(busqueda.toLowerCase());
+    const coincideCategoria =
+      categoriaFiltro === "Todas" || obra.categoria === categoriaFiltro;
+    return coincideNombre && coincideCategoria;
+  });
 
   // Opciones del Menú Lateral (Sidebar)
   const menuOpciones = [
@@ -36,6 +58,17 @@ export default function ResumenAdmin({
         </svg>
       ),
     },
+
+    {
+      id: "agregar",
+      nombre: "Agregar Productos",
+      icono: (
+        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      ),
+    },
+
     {
       id: "categorias",
       nombre: "Categorías",
@@ -146,7 +179,12 @@ export default function ResumenAdmin({
                   key={opcion.id}
                   type="button"
                   onClick={() => {
-                    setSeccionActiva(opcion.id);
+                    if (opcion.id === "agregar") {
+                      setObraEnEdicion(null);
+                      setFormularioAbierto(true);
+                    } else {
+                      setSeccionActiva(opcion.id);
+                    }
                     setMenuMovilAbierto(false);
                   }}
                   className={`cursor-pointer w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 ${
@@ -249,102 +287,343 @@ export default function ResumenAdmin({
 
         {/* Cuerpo del Dashboard */}
         <main className="flex-1 p-4 sm:p-8 space-y-8 max-w-7xl w-full">
-          {/* Encabezado de Bienvenida */}
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-              <span className="text-xs uppercase tracking-widest font-bold text-avb-blue">
-                Resumen Operativo
-              </span>
-              <h2 className="text-2xl font-bold text-slate-900 mt-1">
-                Catálogo y Cotizaciones en Vivo
-              </h2>
-              <p className="text-xs sm:text-sm text-slate-500 mt-1">
-                Monitoreo del catálogo de obras y canal directo de WhatsApp.
-              </p>
-            </div>
 
-            <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3.5 py-2 rounded-xl text-xs font-medium self-start sm:self-auto">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span>Canal WhatsApp Activo</span>
-            </div>
-          </div>
+        {/* VISTA 1: CATÁLOGO DE PRODUCTOS (Fiel al Wireframe)   */}
 
-          {/* Tarjetas de Métricas (KPIs) */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {metricasKPI.map((kpi) => (
-              <div
-                key={kpi.id}
-                className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex flex-col justify-between"
-              >
-                <div className="flex items-start justify-between">
-                  <div>
-                    <span className="text-xs font-semibold text-slate-500 block">
-                      {kpi.titulo}
-                    </span>
-                    <strong className="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1 block">
-                      {kpi.valor}
-                    </strong>
-                  </div>
-
-                  <div className={`p-2.5 rounded-xl border ${kpi.colorIcono}`}>
-                    {kpi.icono}
-                  </div>
-                </div>
-
-                <div className="mt-4 pt-3 border-t border-slate-100 text-xs text-slate-500 truncate">
-                  {kpi.subtexto}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Obras Publicadas en el Catálogo */}
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
-            <div className="p-5 border-b border-slate-100 flex items-center justify-between">
+        {seccionActiva === "productos" && (
+          <div className="space-y-6">
+            {/* Encabezado y Botones de Acción */}
+            <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
               <div>
-                <h3 className="font-bold text-slate-900 text-base">
-                  Obras Publicadas en el Catálogo
-                </h3>
-                <p className="text-xs text-slate-500">
-                  Proyectos visibles para los clientes en el sitio web
+                <div className="inline-flex items-center gap-2 bg-blue-100 text-avb-blue text-[11px] font-bold px-3 py-1 rounded-full mb-2 border border-blue-200">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                  <span>Inventario General • AVB-PROD-2025</span>
+                </div>
+                <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">
+                  Catálogo de Productos
+                </h1>
+                <p className="text-slate-500 text-xs sm:text-sm mt-1 max-w-2xl">
+                  Gestión y control integral de las soluciones arquitectónicas, perfiles y cristales cargados en el catálogo de taller.
                 </p>
               </div>
-              <span className="text-xs font-bold text-avb-blue bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-200">
-                {totalObras} Obras
-              </span>
+
+              {/* Botón Agregar Nuevo Producto */}
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setObraEnEdicion(null);
+                    setFormularioAbierto(true);
+                  }}
+                  className="cursor-pointer bg-avb-blue hover:bg-blue-800 text-white text-xs sm:text-sm font-bold px-4 py-2.5 rounded-xl flex items-center gap-2 transition-all shadow-md shadow-blue-900/20"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                  </svg>
+                  <span>+ Agregar Nuevo Producto</span>
+                </button>
+              </div>
             </div>
 
-            <div className="divide-y divide-slate-100">
-              {obras.map((obra) => (
-                <div
-                  key={obra.id}
-                  className="p-4 sm:p-5 flex items-center justify-between gap-4 hover:bg-slate-50/50 transition-colors"
+            {/* Tarjeta de Métrica: Total Registrados */}
+            <div className="w-full sm:w-64 bg-white p-5 rounded-2xl shadow-xs border border-slate-200">
+              <div className="flex items-center justify-between text-slate-500 mb-2">
+                <span className="text-[11px] font-bold uppercase tracking-wider">
+                  TOTAL REGISTRADOS
+                </span>
+                <div className="p-1.5 bg-blue-50 text-avb-blue rounded-lg border border-blue-100">
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                  </svg>
+                </div>
+              </div>
+              <div className="flex items-baseline gap-2">
+                <span className="text-3xl font-extrabold text-slate-900">
+                  {totalObras}
+                </span>
+                <span className="text-xs text-slate-500 font-medium">
+                  modelos en base de datos
+                </span>
+              </div>
+            </div>
+
+            {/* Barra de Búsqueda y Filtros */}
+            <div className="bg-white p-3 rounded-2xl shadow-xs border border-slate-200 flex flex-col md:flex-row gap-3 items-center justify-between">
+              <div className="relative flex-1 w-full">
+                <svg className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <input
+                  type="text"
+                  value={busqueda}
+                  onChange={(e) => setBusqueda(e.target.value)}
+                  placeholder="Buscar por nombre, código de referencia o tipo..."
+                  className="w-full pl-10 pr-4 py-2 text-xs sm:text-sm rounded-xl border border-slate-200 outline-none focus:border-avb-blue focus:ring-1 focus:ring-avb-blue"
+                />
+              </div>
+
+              <div className="flex items-center gap-2 w-full md:w-auto">
+                <select
+                  value={categoriaFiltro}
+                  onChange={(e) => setCategoriaFiltro(e.target.value)}
+                  className="flex-1 md:flex-none px-3 py-2 text-xs rounded-xl border border-slate-200 bg-white font-medium text-slate-700 outline-none"
                 >
-                  <div className="flex items-center gap-3.5 min-w-0">
-                    <img
-                      src={obra.imagen}
-                      alt={obra.nombre}
-                      className="w-14 h-14 rounded-xl object-cover border border-slate-200 shrink-0"
-                    />
-                    <div className="min-w-0">
-                      <h4 className="text-sm font-bold text-slate-800 truncate">
-                        {obra.nombre}
-                      </h4>
-                      <p className="text-xs text-slate-500">
-                        Categoría: <span className="font-medium text-slate-700">{obra.categoria}</span>
-                      </p>
+                  <option value="Todas">Todas las Categorías</option>
+                  {listaCategorias.map((cat, i) => (
+                    <option key={i} value={cat}>
+                      {cat}
+                    </option>
+                  ))}
+                </select>
+
+                <select
+                  className="flex-1 md:flex-none px-3 py-2 text-xs rounded-xl border border-slate-200 bg-white font-medium text-slate-700 outline-none"
+                >
+                  <option>Todos los Estados</option>
+                  <option>En Catálogo</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Tabla de Productos Estilizada */}
+            <div className="bg-white rounded-2xl shadow-xs border border-slate-200 overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-slate-50 border-b border-slate-200 text-[11px] font-extrabold text-slate-500 uppercase tracking-wider">
+                      <th className="py-3.5 px-5">PRODUCTO Y MODELO</th>
+                      <th className="py-3.5 px-5">CATEGORÍA</th>
+                      <th className="py-3.5 px-5">ESPECIFICACIONES DE CRISTAL</th>
+                      <th className="py-3.5 px-5 text-right">ACCIONES</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 text-xs">
+                    {obrasFiltradas.length > 0 ? (
+                      obrasFiltradas.map((obra) => (
+                        <tr key={obra.id} className="hover:bg-slate-50/70 transition-colors">
+                          {/* Producto y Foto */}
+                          <td className="py-4 px-5">
+                            <div className="flex items-center gap-3.5">
+                              <img
+                                src={obra.imagen}
+                                alt={obra.nombre}
+                                className="w-12 h-12 rounded-xl object-cover border border-slate-200 shrink-0"
+                              />
+                              <span className="font-bold text-slate-900 text-sm">
+                                {obra.nombre}
+                              </span>
+                            </div>
+                          </td>
+
+                          {/* Categoría Badge */}
+                          <td className="py-4 px-5">
+                            <span className="inline-block bg-slate-100 text-slate-700 font-semibold px-2.5 py-1 rounded-lg text-[11px] border border-slate-200">
+                              {obra.categoria}
+                            </span>
+                          </td>
+
+                          {/* Especificaciones */}
+                          <td className="py-4 px-5 max-w-xs">
+                            <div className="text-slate-800 font-medium">
+                              {obra.especificaciones?.vidrio || "Cristal Templado NCh 135"}
+                            </div>
+                            <div className="text-[11px] text-slate-400 mt-0.5">
+                              {obra.especificaciones?.perfileria || "Aluminio de Alta Gama"}
+                            </div>
+                          </td>
+
+                          {/* Botón Editar */}
+                          <td className="py-4 px-5 text-right">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setObraEnEdicion(obra);
+                                setFormularioAbierto(true);
+                              }}
+                              className="cursor-pointer text-xs font-bold text-avb-blue hover:text-blue-800 bg-blue-50 hover:bg-blue-100 border border-blue-200 px-3 py-1.5 rounded-lg transition-colors"
+                            >
+                              Editar
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="4" className="text-center py-10 text-slate-400 text-xs">
+                          No se encontraron productos que coincidan con la búsqueda.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Pie de Tabla / Paginación */}
+              <div className="p-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+                <span>
+                  Mostrando 1 a {obrasFiltradas.length} de {totalObras} productos registrados
+                </span>
+                <div className="flex items-center gap-1.5">
+                  <button type="button" className="px-3 py-1 rounded-lg border border-slate-200 bg-white text-slate-600 font-semibold hover:bg-slate-50">
+                    Anterior
+                  </button>
+                  <button type="button" className="px-3 py-1 rounded-lg bg-avb-blue text-white font-bold">
+                    1
+                  </button>
+                  <button type="button" className="px-3 py-1 rounded-lg border border-slate-200 bg-white text-slate-600 font-semibold hover:bg-slate-50">
+                    Siguiente
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+
+        {/* VISTA 2: DASHBOARD / RESUMEN GENERAL                 */}
+
+        {seccionActiva === "dashboard" && (
+          <div className="space-y-8">
+            {/* Encabezado de Bienvenida */}
+            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <span className="text-xs uppercase tracking-widest font-bold text-avb-blue">
+                  Resumen Operativo
+                </span>
+                <h2 className="text-2xl font-bold text-slate-900 mt-1">
+                  Catálogo y Cotizaciones en Vivo
+                </h2>
+                <p className="text-xs sm:text-sm text-slate-500 mt-1">
+                  Monitoreo del catálogo de obras y canal directo de WhatsApp.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3.5 py-2 rounded-xl text-xs font-medium self-start sm:self-auto">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span>Canal WhatsApp Activo</span>
+              </div>
+            </div>
+
+            {/* Tarjetas de Métricas (KPIs) */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              {metricasKPI.map((kpi) => (
+                <div
+                  key={kpi.id}
+                  className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex flex-col justify-between"
+                >
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <span className="text-xs font-semibold text-slate-500 block">
+                        {kpi.titulo}
+                      </span>
+                      <strong className="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1 block">
+                        {kpi.valor}
+                      </strong>
+                    </div>
+
+                    <div className={`p-2.5 rounded-xl border ${kpi.colorIcono}`}>
+                      {kpi.icono}
                     </div>
                   </div>
 
-                  <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg shrink-0">
-                    ● En Catálogo
-                  </span>
+                  <div className="mt-4 pt-3 border-t border-slate-100 text-xs text-slate-500 truncate">
+                    {kpi.subtexto}
+                  </div>
                 </div>
               ))}
             </div>
+
+            {/* Vista rápida de obras en Dashboard */}
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+              <div className="p-5 border-b border-slate-100 flex items-center justify-between">
+                <div>
+                  <h3 className="font-bold text-slate-900 text-base">
+                    Obras Publicadas en el Catálogo
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    Proyectos visibles para los clientes en el sitio web
+                  </p>
+                </div>
+                <span className="text-xs font-bold text-avb-blue bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-200">
+                  {totalObras} Obras
+                </span>
+              </div>
+
+              <div className="divide-y divide-slate-100">
+                {obras.slice(0, 4).map((obra) => (
+                  <div
+                    key={obra.id}
+                    className="p-4 sm:p-5 flex items-center justify-between gap-4 hover:bg-slate-50/50 transition-colors"
+                  >
+                    <div className="flex items-center gap-3.5 min-w-0">
+                      <img
+                        src={obra.imagen}
+                        alt={obra.nombre}
+                        className="w-12 h-12 rounded-xl object-cover border border-slate-200 shrink-0"
+                      />
+                      <div className="min-w-0">
+                        <h4 className="text-sm font-bold text-slate-800 truncate">
+                          {obra.nombre}
+                        </h4>
+                        <p className="text-xs text-slate-500">
+                          Categoría: <span className="font-medium text-slate-700">{obra.categoria}</span>
+                        </p>
+                      </div>
+                    </div>
+
+                    <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg shrink-0">
+                      ● En Catálogo
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
+        )}
+
+
+        {/* VISTA 3: CATEGORÍAS                                  */}
+
+        {seccionActiva === "categorias" && (
+          <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-xs text-center">
+            <h3 className="font-bold text-slate-800 text-lg">Categorías Registradas</h3>
+            <p className="text-xs text-slate-500 mt-1 mb-4">
+              Categorías actualmente disponibles en el catálogo de taller:
+            </p>
+            <div className="flex flex-wrap justify-center gap-2">
+              {listaCategorias.map((cat, idx) => (
+                <span
+                  key={idx}
+                  className="bg-blue-50 text-avb-blue text-xs font-bold px-3 py-1.5 rounded-xl border border-blue-200"
+                >
+                  {cat}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
         </main>
       </div>
+
+      {/* Modal de Formulario (Crear / Editar) */}
+      {formularioAbierto && (
+        <FormularioObra
+          obraAEditar={obraEnEdicion}
+          categoriasDisponibles={listaCategorias}
+          onCerrar={() => {
+            setFormularioAbierto(false);
+            setObraEnEdicion(null);
+          }}
+          onGuardar={(obraGuardada) => {
+            if (onGuardarObra) {
+              onGuardarObra(obraGuardada);
+            }
+            setFormularioAbierto(false);
+            setObraEnEdicion(null);
+          }}
+        />
+      )}
     </div>
   );
 }

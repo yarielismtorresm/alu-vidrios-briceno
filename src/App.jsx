@@ -216,32 +216,46 @@ const obrasEjemplo = [
 ];
 
 function App() {
-  // 1. Estado para la categoría seleccionada
+  // 1. Estado principal del listado de obras (reactivo para altas y ediciones)
+    const [listaObras, setListaObras] = useState(obrasEjemplo);
+
+  // 2. Estado para la categoría seleccionada
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState("Todas");
 
-  // 2. Estado para la obra actualmente abierta en el Modal de Ficha Técnica
+  // 3. Estado para la obra actualmente abierta en el Modal de Ficha Técnica
   const [obraSeleccionada, setObraSeleccionada] = useState(null)
 
-  // 3. Extraer categorias únicas dinámicamente a partir de las obras
+  // 4. Extraer categorias únicas dinámicamente a partir de las obras
   const listaCategorias = [
     "Todas",
-    ...new Set(obrasEjemplo.map((obra) => obra.categoria)),
+    ...new Set(listaObras.map((obra) => obra.categoria)),
   ];
 
   const handleVolverAlCatalogo = () => {
     setObraSeleccionada(null);
   };
 
-  // 4. Filtrar obras según la categoría seleccionada
+  // 5. Filtrar obras según la categoría seleccionada
   const obrasFiltradas =
     categoriaSeleccionada === "Todas"
-      ? obrasEjemplo
-      : obrasEjemplo.filter((obra) => obra.categoria === categoriaSeleccionada);
+    ? listaObras
+      : listaObras.filter((obra) => obra.categoria === categoriaSeleccionada);
 
-  // Detección automática si la URL es /admin o #admin
+  // 6. Detección automática si la URL es /admin o #admin
   const [esRutaAdmin, setEsRutaAdmin] = useState(
     window.location.pathname === "/admin" || window.location.hash === "#admin"
   );
+
+  // 7. Manejador para agregar o editar obras en tiempo real
+  const handleGuardarObra = (obraActualizada) => {
+    setListaObras((prev) => {
+      const existe = prev.some((o) => o.id === obraActualizada.id);
+      if (existe) {
+        return prev.map((o) => (o.id === obraActualizada.id ? obraActualizada : o));
+      }
+      return [obraActualizada, ...prev];
+    });
+  };
 
   // Estado estaAutenticado
   const [estaAutenticado, setEstaAutenticado] = useState(false);
@@ -277,7 +291,8 @@ function App() {
 
   return (
    <ResumenAdmin
-     obras={obrasEjemplo}
+     obras={listaObras}
+     onGuardarObra={handleGuardarObra}
      onLogout={() => setEstaAutenticado(false)}
      onVerSitioPublico={() => {
         window.location.hash = "";
@@ -286,7 +301,6 @@ function App() {
     />
    );
  }
-
 
   return (
     <div className="min-h-screen bg-avb-bg text-avb-dark font-sans flex flex-col">
@@ -297,7 +311,7 @@ function App() {
       {obraSeleccionada ? (
         <FichaTecnica
           obra={obraSeleccionada}
-          todasLasObras={obrasEjemplo}
+          todasLasObras={listaObras}
           onVolver={handleVolverAlCatalogo}
           onSeleccionarObra={setObraSeleccionada}
         />
