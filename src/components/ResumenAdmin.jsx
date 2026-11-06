@@ -2,6 +2,7 @@ import { useState } from "react";
 import logoAvb from "../assets/logo-avb.png";
 import { WHATSAPP_CONFIG } from "../utils/whatsapp";
 import FormularioObra from "./FormularioObra";
+import FormularioCategoria from "./FormularioCategoria";
 
 // Abrir el modal y recibir props para crear/editar
 
@@ -25,11 +26,6 @@ export default function ResumenAdmin({
   // Estados para Modal de Categoría
   const [modalCategoriaAbierto, setModalCategoriaAbierto] = useState(false);
   const [categoriaEnEdicion, setCategoriaEnEdicion] = useState(null);
-  const [formCategoria, setFormCategoria] = useState({
-    nombre: "",
-    descripcion: "",
-    activa: true,
-  });
 
   // Estados de Búsqueda y Filtros en la vista de Catálogo
   const [busqueda, setBusqueda] = useState("");
@@ -606,7 +602,6 @@ export default function ResumenAdmin({
                         type="button"
                         onClick={() => {
                           setCategoriaEnEdicion(null);
-                          setFormCategoria({ nombre: "", descripcion: "", activa: true });
                           setModalCategoriaAbierto(true);
                         }}
                         className="cursor-pointer bg-avb-blue hover:bg-blue-800 text-white text-xs sm:text-sm font-bold px-4 py-2.5 rounded-xl flex items-center gap-2 transition-all shadow-md shadow-blue-900/20"
@@ -742,11 +737,6 @@ export default function ResumenAdmin({
                                 type="button"
                                 onClick={() => {
                                   setCategoriaEnEdicion(cat);
-                                  setFormCategoria({
-                                    nombre: cat.nombre,
-                                    descripcion: cat.descripcion,
-                                    activa: cat.activa,
-                                  });
                                   setModalCategoriaAbierto(true);
                                 }}
                                 className="cursor-pointer text-xs font-bold text-avb-blue hover:text-blue-800 bg-blue-50 hover:bg-blue-100 border border-blue-200 px-3 py-1.5 rounded-lg transition-colors"
@@ -785,116 +775,22 @@ export default function ResumenAdmin({
 
             {/* MODAL PARA AGREGAR / EDITAR CATEGORÍA */}
             {modalCategoriaAbierto && (
-              <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-4">
-                <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200">
-                  <div className="flex items-center justify-between pb-4 border-b border-slate-100 mb-5">
-                    <div>
-                      <span className="text-[11px] font-extrabold uppercase tracking-widest text-avb-blue">
-                        {categoriaEnEdicion ? "Edición" : "Nueva Línea"}
-                      </span>
-                      <h3 className="text-lg font-bold text-slate-900">
-                        {categoriaEnEdicion ? `Editar: ${categoriaEnEdicion.nombre}` : "Crear Categoría"}
-                      </h3>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => setModalCategoriaAbierto(false)}
-                      className="cursor-pointer text-slate-400 hover:text-slate-700 p-1 rounded-lg"
-                    >
-                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
-                  </div>
-
-                  <form
-                    onSubmit={(e) => {
-                      e.preventDefault();
-                      if (!formCategoria.nombre.trim()) return;
-
-                      if (onGuardarCategoria) {
-                        onGuardarCategoria({
-                          id: categoriaEnEdicion ? categoriaEnEdicion.id : Date.now(),
-                          nombre: formCategoria.nombre.trim(),
-                          descripcion: formCategoria.descripcion.trim(),
-                          activa: formCategoria.activa,
-                        });
-                      }
-                      setModalCategoriaAbierto(false);
-                    }}
-                    className="space-y-4"
-                  >
-                    <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                        Nombre de la Categoría *
-                      </label>
-                      <input
-                        type="text"
-                        value={formCategoria.nombre}
-                        onChange={(e) => setFormCategoria({ ...formCategoria, nombre: e.target.value })}
-                        placeholder="Ej: Fachadas Comerciales & Piel de Vidrio"
-                        required
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-avb-blue outline-hidden"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                        Descripción Técnica de la Línea *
-                      </label>
-                      <textarea
-                        rows="3"
-                        value={formCategoria.descripcion}
-                        onChange={(e) => setFormCategoria({ ...formCategoria, descripcion: e.target.value })}
-                        placeholder="Describe los tipos de perfiles y cristales arquitectónicos de esta categoría..."
-                        required
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-avb-blue outline-hidden resize-none"
-                      />
-                    </div>
-
-                    <div className="flex items-center justify-between p-3.5 bg-slate-50 rounded-2xl border border-slate-200">
-                      <div>
-                        <span className="text-xs font-bold text-slate-800 block">Visibilidad Pública</span>
-                        <span className="text-[11px] text-slate-500">
-                          {formCategoria.activa ? "Visible en los filtros del catálogo web" : "Oculta temporalmente"}
-                        </span>
-                      </div>
-                      <button
-                        type="button"
-                        role="switch"
-                        aria-checked={formCategoria.activa}
-                        onClick={() => setFormCategoria({ ...formCategoria, activa: !formCategoria.activa })}
-                        className={`cursor-pointer relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors ${
-                          formCategoria.activa ? "bg-emerald-500" : "bg-slate-300"
-                        }`}
-                      >
-                        <span
-                          className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-md transition ${
-                            formCategoria.activa ? "translate-x-6" : "translate-x-1"
-                          }`}
-                        />
-                      </button>
-                    </div>
-
-                    <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-3">
-                      <button
-                        type="button"
-                        onClick={() => setModalCategoriaAbierto(false)}
-                        className="cursor-pointer px-4 py-2 rounded-xl border border-slate-300 text-slate-700 text-xs font-semibold hover:bg-slate-100"
-                      >
-                        Cancelar
-                      </button>
-                      <button
-                        type="submit"
-                        className="cursor-pointer px-5 py-2 rounded-xl bg-avb-blue hover:bg-blue-800 text-white text-xs font-bold shadow-md shadow-blue-900/20"
-                      >
-                        {categoriaEnEdicion ? "Guardar Cambios" : "Crear Categoría"}
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            )}
+              <FormularioCategoria
+                        categoriaAEditar={categoriaEnEdicion}
+                        categoriasExistentes={categorias}
+                        onCerrar={() => {
+                          setModalCategoriaAbierto(false);
+                          setCategoriaEnEdicion(null);
+                        }}
+                        onGuardar={(categoriaGuardada) => {
+                          if (onGuardarCategoria) {
+                            onGuardarCategoria(categoriaGuardada);
+                          }
+                          setModalCategoriaAbierto(false);
+                          setCategoriaEnEdicion(null);
+                  }}
+                />
+             )}
           </div>
         );
       }
