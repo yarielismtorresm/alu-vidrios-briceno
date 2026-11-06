@@ -7,7 +7,10 @@ import FormularioObra from "./FormularioObra";
 
 export default function ResumenAdmin({
   obras = [],
+  categorias = [],
   onGuardarObra,
+  onToggleCategoria,
+  onGuardarCategoria,
   onLogout,
   onVerSitioPublico,
 }) {
@@ -19,14 +22,25 @@ export default function ResumenAdmin({
     const [formularioAbierto, setFormularioAbierto] = useState(false);
     const [obraEnEdicion, setObraEnEdicion] = useState(null);
 
+  // Estados para Modal de Categoría
+  const [modalCategoriaAbierto, setModalCategoriaAbierto] = useState(false);
+  const [categoriaEnEdicion, setCategoriaEnEdicion] = useState(null);
+  const [formCategoria, setFormCategoria] = useState({
+    nombre: "",
+    descripcion: "",
+    activa: true,
+  });
+
   // Estados de Búsqueda y Filtros en la vista de Catálogo
   const [busqueda, setBusqueda] = useState("");
   const [categoriaFiltro, setCategoriaFiltro] = useState("Todas");
 
   // Cálculos dinámicos reales del catálogo
   const totalObras = obras.length;
-  const listaCategorias = [...new Set(obras.map((o) => o.categoria))];
-  const totalCategorias = listaCategorias.length;
+  const totalCategorias = categorias.length;
+  const categoriasActivas = categorias.filter((c) => c.activa).length;
+  const categoriasInactivas = totalCategorias - categoriasActivas;
+  const listaNombresCategorias = categorias.map((c) => c.nombre);
 
   // Filtrado de obras para la tabla de productos
   const obrasFiltradas = obras.filter((obra) => {
@@ -55,16 +69,6 @@ export default function ResumenAdmin({
       icono: (
         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-        </svg>
-      ),
-    },
-
-    {
-      id: "agregar",
-      nombre: "Agregar Productos",
-      icono: (
-        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
       ),
     },
@@ -117,7 +121,7 @@ export default function ResumenAdmin({
       id: "categorias",
       titulo: "Categorías de Obras",
       valor: totalCategorias.toString(),
-      subtexto: listaCategorias.slice(0, 2).join(", ") + "...",
+      subtexto: listaNombresCategorias.slice(0, 2).join(", ") + "...",
       colorIcono: "text-indigo-600 bg-indigo-50 border-indigo-200",
       icono: (
         <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -179,14 +183,10 @@ export default function ResumenAdmin({
                   key={opcion.id}
                   type="button"
                   onClick={() => {
-                    if (opcion.id === "agregar") {
-                      setObraEnEdicion(null);
-                      setFormularioAbierto(true);
-                    } else {
-                      setSeccionActiva(opcion.id);
-                    }
+                    setSeccionActiva(opcion.id);
                     setMenuMovilAbierto(false);
                   }}
+
                   className={`cursor-pointer w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 ${
                     estaActivo
                       ? "bg-avb-blue text-white shadow-md shadow-blue-950/40 font-bold"
@@ -369,7 +369,7 @@ export default function ResumenAdmin({
                   className="flex-1 md:flex-none px-3 py-2 text-xs rounded-xl border border-slate-200 bg-white font-medium text-slate-700 outline-none"
                 >
                   <option value="Todas">Todas las Categorías</option>
-                  {listaCategorias.map((cat, i) => (
+                  {listaNombresCategorias.map((cat, i) => (
                     <option key={i} value={cat}>
                       {cat}
                     </option>
@@ -582,48 +582,319 @@ export default function ResumenAdmin({
         )}
 
 
-        {/* VISTA 3: CATEGORÍAS                                  */}
+        {/* VISTA 3:  GESTIÓN DE CATEGORÍAS CON TARJETAS Y SWITCH        */}
 
         {seccionActiva === "categorias" && (
-          <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-xs text-center">
-            <h3 className="font-bold text-slate-800 text-lg">Categorías Registradas</h3>
-            <p className="text-xs text-slate-500 mt-1 mb-4">
-              Categorías actualmente disponibles en el catálogo de taller:
-            </p>
-            <div className="flex flex-wrap justify-center gap-2">
-              {listaCategorias.map((cat, idx) => (
-                <span
-                  key={idx}
-                  className="bg-blue-50 text-avb-blue text-xs font-bold px-3 py-1.5 rounded-xl border border-blue-200"
-                >
-                  {cat}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
+        <div className="space-y-6">
+                    {/* Encabezado y Botón Nueva Categoría */}
+                    <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
+                      <div>
+                        <div className="inline-flex items-center gap-2 bg-blue-100 text-avb-blue text-[11px] font-bold px-3 py-1 rounded-full mb-2 border border-blue-200">
+                          <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                          <span>Control de Líneas Arquitectónicas</span>
+                        </div>
+                        <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">
+                          Gestión de Categorías
+                        </h1>
+                        <p className="text-slate-500 text-xs sm:text-sm mt-1 max-w-2xl">
+                          Administra las líneas de productos, su visibilidad en el catálogo web y las especificaciones técnicas asociadas.
+                        </p>
+                      </div>
 
-        </main>
+                      {/* Botón Crear Categoría */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setCategoriaEnEdicion(null);
+                          setFormCategoria({ nombre: "", descripcion: "", activa: true });
+                          setModalCategoriaAbierto(true);
+                        }}
+                        className="cursor-pointer bg-avb-blue hover:bg-blue-800 text-white text-xs sm:text-sm font-bold px-4 py-2.5 rounded-xl flex items-center gap-2 transition-all shadow-md shadow-blue-900/20"
+                      >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        <span>+ Nueva Categoría</span>
+                      </button>
+                    </div>
+
+                    {/* Tarjetas de Métricas de Categorías */}
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
+                        <div>
+                          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total Categorías</span>
+                          <div className="text-2xl font-extrabold text-slate-900 mt-0.5">{totalCategorias}</div>
+                        </div>
+                        <div className="p-2.5 bg-blue-50 text-avb-blue rounded-xl border border-blue-100">
+                          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                          </svg>
+                        </div>
+                      </div>
+
+                      <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
+                        <div>
+                          <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-600">Activas en Catálogo</span>
+                          <div className="text-2xl font-extrabold text-slate-900 mt-0.5">{categoriasActivas}</div>
+                        </div>
+                        <div className="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl border border-emerald-100">
+                          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                        </div>
+                      </div>
+
+                      <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
+                        <div>
+                          <span className="text-[11px] font-bold uppercase tracking-wider text-amber-600">Ocultas / Inactivas</span>
+                          <div className="text-2xl font-extrabold text-slate-900 mt-0.5">{categoriasInactivas}</div>
+                        </div>
+                        <div className="p-2.5 bg-amber-50 text-amber-600 rounded-xl border border-amber-100">
+                          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Cuadrícula de Tarjetas de Categorías */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {categorias.map((cat) => {
+                        const obrasAsociadas = obras.filter(
+                          (o) => o.categoria.toLowerCase() === cat.nombre.toLowerCase()
+                        ).length;
+
+                        return (
+                          <div
+                            key={cat.id}
+                            className={`bg-white rounded-3xl p-6 border transition-all duration-200 flex flex-col justify-between shadow-xs ${
+                              cat.activa
+                                ? "border-slate-200 hover:border-avb-blue hover:shadow-md"
+                                : "border-slate-200 bg-slate-50/60 opacity-80"
+                            }`}
+                          >
+                            <div>
+                              {/* Cabecera de la Tarjeta con Switch */}
+                              <div className="flex items-start justify-between gap-3 mb-4">
+                                <div className="flex items-center gap-3">
+                                  <div
+                                    className={`w-11 h-11 rounded-2xl flex items-center justify-center font-bold text-sm ${
+                                      cat.activa
+                                        ? "bg-blue-50 text-avb-blue border border-blue-100"
+                                        : "bg-slate-200 text-slate-500"
+                                    }`}
+                                  >
+                                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                                    </svg>
+                                  </div>
+                                  <div>
+                                    <h3 className="font-extrabold text-slate-900 text-base leading-tight">
+                                      {cat.nombre}
+                                    </h3>
+                                    <span className="text-[11px] font-bold text-slate-400">
+                                      ID: CAT-0{cat.id}
+                                    </span>
+                                  </div>
+                                </div>
+
+                                {/* SWITCH TOGGLE DE ESTADO */}
+                                <div className="flex flex-col items-end">
+                                  <button
+                                    type="button"
+                                    role="switch"
+                                    aria-checked={cat.activa}
+                                    onClick={() => onToggleCategoria && onToggleCategoria(cat.id)}
+                                    className={`cursor-pointer relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-hidden ${
+                                      cat.activa ? "bg-emerald-500" : "bg-slate-300"
+                                    }`}
+                                  >
+                                    <span
+                                      className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-md transition duration-200 ease-in-out ${
+                                        cat.activa ? "translate-x-6" : "translate-x-1"
+                                      }`}
+                                    />
+                                  </button>
+                                  <span
+                                    className={`text-[10px] font-extrabold uppercase tracking-wider mt-1 ${
+                                      cat.activa ? "text-emerald-600" : "text-slate-400"
+                                    }`}
+                                  >
+                                    {cat.activa ? "Pública" : "Oculta"}
+                                  </span>
+                                </div>
+                              </div>
+
+                              {/* Descripción */}
+                              <p className="text-xs text-slate-600 leading-relaxed min-h-[48px]">
+                                {cat.descripcion}
+                              </p>
+                            </div>
+
+                            {/* Pie de Tarjeta con Contador de Obras y Botón Editar */}
+                            <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between">
+                              <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-500">
+                                <span className="w-2 h-2 rounded-full bg-avb-blue" />
+                                <span>{obrasAsociadas} {obrasAsociadas === 1 ? "Obra" : "Obras"} asociadas</span>
+                              </div>
+
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setCategoriaEnEdicion(cat);
+                                  setFormCategoria({
+                                    nombre: cat.nombre,
+                                    descripcion: cat.descripcion,
+                                    activa: cat.activa,
+                                  });
+                                  setModalCategoriaAbierto(true);
+                                }}
+                                className="cursor-pointer text-xs font-bold text-avb-blue hover:text-blue-800 bg-blue-50 hover:bg-blue-100 border border-blue-200 px-3 py-1.5 rounded-lg transition-colors"
+                              >
+                                Editar
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+         </main>
       </div>
 
       {/* Modal de Formulario (Crear / Editar) */}
       {formularioAbierto && (
-        <FormularioObra
-          obraAEditar={obraEnEdicion}
-          categoriasDisponibles={listaCategorias}
-          onCerrar={() => {
-            setFormularioAbierto(false);
-            setObraEnEdicion(null);
-          }}
-          onGuardar={(obraGuardada) => {
-            if (onGuardarObra) {
-              onGuardarObra(obraGuardada);
-            }
-            setFormularioAbierto(false);
-            setObraEnEdicion(null);
-          }}
-        />
-      )}
-    </div>
-  );
-}
+              <FormularioObra
+                obraAEditar={obraEnEdicion}
+                categoriasDisponibles={listaNombresCategorias}
+                onCerrar={() => {
+                  setFormularioAbierto(false);
+                  setObraEnEdicion(null);
+                }}
+                onGuardar={(obraGuardada) => {
+                  if (onGuardarObra) {
+                    onGuardarObra(obraGuardada);
+                  }
+                  setFormularioAbierto(false);
+                  setObraEnEdicion(null);
+                }}
+              />
+            )}
+
+            {/* MODAL PARA AGREGAR / EDITAR CATEGORÍA */}
+            {modalCategoriaAbierto && (
+              <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-4">
+                <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200">
+                  <div className="flex items-center justify-between pb-4 border-b border-slate-100 mb-5">
+                    <div>
+                      <span className="text-[11px] font-extrabold uppercase tracking-widest text-avb-blue">
+                        {categoriaEnEdicion ? "Edición" : "Nueva Línea"}
+                      </span>
+                      <h3 className="text-lg font-bold text-slate-900">
+                        {categoriaEnEdicion ? `Editar: ${categoriaEnEdicion.nombre}` : "Crear Categoría"}
+                      </h3>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setModalCategoriaAbierto(false)}
+                      className="cursor-pointer text-slate-400 hover:text-slate-700 p-1 rounded-lg"
+                    >
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      if (!formCategoria.nombre.trim()) return;
+
+                      if (onGuardarCategoria) {
+                        onGuardarCategoria({
+                          id: categoriaEnEdicion ? categoriaEnEdicion.id : Date.now(),
+                          nombre: formCategoria.nombre.trim(),
+                          descripcion: formCategoria.descripcion.trim(),
+                          activa: formCategoria.activa,
+                        });
+                      }
+                      setModalCategoriaAbierto(false);
+                    }}
+                    className="space-y-4"
+                  >
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                        Nombre de la Categoría *
+                      </label>
+                      <input
+                        type="text"
+                        value={formCategoria.nombre}
+                        onChange={(e) => setFormCategoria({ ...formCategoria, nombre: e.target.value })}
+                        placeholder="Ej: Fachadas Comerciales & Piel de Vidrio"
+                        required
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-avb-blue outline-hidden"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                        Descripción Técnica de la Línea *
+                      </label>
+                      <textarea
+                        rows="3"
+                        value={formCategoria.descripcion}
+                        onChange={(e) => setFormCategoria({ ...formCategoria, descripcion: e.target.value })}
+                        placeholder="Describe los tipos de perfiles y cristales arquitectónicos de esta categoría..."
+                        required
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-avb-blue outline-hidden resize-none"
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between p-3.5 bg-slate-50 rounded-2xl border border-slate-200">
+                      <div>
+                        <span className="text-xs font-bold text-slate-800 block">Visibilidad Pública</span>
+                        <span className="text-[11px] text-slate-500">
+                          {formCategoria.activa ? "Visible en los filtros del catálogo web" : "Oculta temporalmente"}
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        role="switch"
+                        aria-checked={formCategoria.activa}
+                        onClick={() => setFormCategoria({ ...formCategoria, activa: !formCategoria.activa })}
+                        className={`cursor-pointer relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors ${
+                          formCategoria.activa ? "bg-emerald-500" : "bg-slate-300"
+                        }`}
+                      >
+                        <span
+                          className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-md transition ${
+                            formCategoria.activa ? "translate-x-6" : "translate-x-1"
+                          }`}
+                        />
+                      </button>
+                    </div>
+
+                    <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setModalCategoriaAbierto(false)}
+                        className="cursor-pointer px-4 py-2 rounded-xl border border-slate-300 text-slate-700 text-xs font-semibold hover:bg-slate-100"
+                      >
+                        Cancelar
+                      </button>
+                      <button
+                        type="submit"
+                        className="cursor-pointer px-5 py-2 rounded-xl bg-avb-blue hover:bg-blue-800 text-white text-xs font-bold shadow-md shadow-blue-900/20"
+                      >
+                        {categoriaEnEdicion ? "Guardar Cambios" : "Crear Categoría"}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      }

@@ -215,38 +215,75 @@ const obrasEjemplo = [
   },
 ];
 
+// Categorías oficiales de Alu Vidrios Briceño con estado de activación
+const categoriasIniciales = [
+  {
+    id: 1,
+    nombre: "Puertas de Baño",
+    descripcion:
+      "Sistemas fijos, batientes y corredizos con vidrio templado de seguridad de 8mm y 10mm.",
+    activa: true,
+  },
+  {
+    id: 2,
+    nombre: "Ventanas Panorámicas",
+    descripcion:
+      "Líneas Serie 80 y muros cortina con doble vidriado hermético (DVH) para aislamiento acústico y térmico.",
+    activa: true,
+  },
+  {
+    id: 3,
+    nombre: "Espejos Flotantes & LED",
+    descripcion:
+      "Cristal belga libre de cobre con retroiluminación LED dual, sensor táctil y corte a medida.",
+    activa: true,
+  },
+];
+
 function App() {
   // 1. Estado principal del listado de obras (reactivo para altas y ediciones)
     const [listaObras, setListaObras] = useState(obrasEjemplo);
 
-  // 2. Estado para la categoría seleccionada
+    // 2. Estado principal de categorías con soporte de activación/desactivación
+  const [listaCategorias, setListaCategorias] = useState(categoriasIniciales);
+
+  // 3. Estado para la categoría seleccionada
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState("Todas");
 
-  // 3. Estado para la obra actualmente abierta en el Modal de Ficha Técnica
+  // 4. Estado para la obra actualmente abierta en el Modal de Ficha Técnica
   const [obraSeleccionada, setObraSeleccionada] = useState(null)
 
-  // 4. Extraer categorias únicas dinámicamente a partir de las obras
-  const listaCategorias = [
+  // 5. Nombres de categorías activas para los filtros del sitio público
+  const nombreCategoriasPublicas = [
     "Todas",
-    ...new Set(listaObras.map((obra) => obra.categoria)),
+    ...listaCategorias.filter((cat) => cat.activa).map((cat) => cat.nombre),
   ];
 
   const handleVolverAlCatalogo = () => {
     setObraSeleccionada(null);
   };
 
-  // 5. Filtrar obras según la categoría seleccionada
-  const obrasFiltradas =
-    categoriaSeleccionada === "Todas"
-    ? listaObras
-      : listaObras.filter((obra) => obra.categoria === categoriaSeleccionada);
+  // 6. Filtrar obras Filtrar obras visibles al público (solo de categorías con estado activo)
+  const obrasVisiblesPublico = listaObras.filter((obra) => {
+      const categoriaObj = listaCategorias.find(
+        (c) => c.nombre.toLowerCase() === obra.categoria.toLowerCase()
+      );
+      return categoriaObj ? categoriaObj.activa : true;
+    });
 
-  // 6. Detección automática si la URL es /admin o #admin
+    const obrasFiltradas =
+      categoriaSeleccionada === "Todas"
+        ? obrasVisiblesPublico
+        : obrasVisiblesPublico.filter(
+            (obra) => obra.categoria === categoriaSeleccionada
+          );
+
+  // 7. Detección automática si la URL es /admin o #admin
   const [esRutaAdmin, setEsRutaAdmin] = useState(
     window.location.pathname === "/admin" || window.location.hash === "#admin"
   );
 
-  // 7. Manejador para agregar o editar obras en tiempo real
+  // 8. Manejador para agregar o editar obras en tiempo real
   const handleGuardarObra = (obraActualizada) => {
     setListaObras((prev) => {
       const existe = prev.some((o) => o.id === obraActualizada.id);
@@ -257,8 +294,29 @@ function App() {
     });
   };
 
+  // 9. Manejadores para Categorías (Switch de estado y Crear/Editar)
+    const handleToggleEstadoCategoria = (idCategoria) => {
+      setListaCategorias((prev) =>
+        prev.map((cat) =>
+          cat.id === idCategoria ? { ...cat, activa: !cat.activa } : cat
+        )
+      );
+    };
+
+    const handleGuardarCategoria = (categoriaData) => {
+      setListaCategorias((prev) => {
+        const existe = prev.some((c) => c.id === categoriaData.id);
+        if (existe) {
+          return prev.map((c) => (c.id === categoriaData.id ? categoriaData : c));
+        }
+        return [...prev, categoriaData];
+      });
+    };
+
   // Estado estaAutenticado
-  const [estaAutenticado, setEstaAutenticado] = useState(false);
+  const [estaAutenticado, setEstaAutenticado] = useState(
+    () => localStorage.getItem("avb_admin_auth") === "true"
+  );
 
   useEffect(() => {
     const handleLocationChange = () => {
@@ -283,6 +341,7 @@ function App() {
     return (
       <LoginAdmin
         onLoginSuccess={() => {
+          localStorage.setItem("avb_admin_auth", "true")
           setEstaAutenticado(true);
         }}
       />
@@ -292,8 +351,14 @@ function App() {
   return (
    <ResumenAdmin
      obras={listaObras}
+     categorias={listaCategorias}
      onGuardarObra={handleGuardarObra}
-     onLogout={() => setEstaAutenticado(false)}
+     onToggleCategoria={handleToggleEstadoCategoria}
+     onGuardarCategoria={handleGuardarCategoria}
+     onLogout={() => {
+            localStorage.removeItem("avb_admin_auth");
+            setEstaAutenticado(false);
+          }}
      onVerSitioPublico={() => {
         window.location.hash = "";
         setEsRutaAdmin(false);
@@ -342,7 +407,7 @@ function App() {
 
         {/* 4. Filtro de Categorías */}
         <FiltrosCategoria
-          categorias={listaCategorias}
+          categorias={nombreCategoriasPublicas}
           categoriaSeleccionada={categoriaSeleccionada}
           onSeleccionarCategoria={setCategoriaSeleccionada}
         />
