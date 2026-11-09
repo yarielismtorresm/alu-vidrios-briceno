@@ -18,7 +18,7 @@ export default function Hero() {
             </div>
 
             {/* Titular Principal */}
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-avb-dark leading-[1.15]">
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-avb-dark leading-[1.15]">
               Transformamos espacios con{" "}
               <span className="text-avb-blue">obras arquitectónicas</span> a
               medida
@@ -70,26 +70,27 @@ export default function Hero() {
             </div>
 
             {/* Pilares Técnicos de Confianza */}
-            <div className="pt-6 border-t border-slate-200/80 grid grid-cols-3 gap-4 text-left">
+            <div className="pt-6 border-t border-slate-200/80 grid grid-cols-3 gap-2 text-left">
               <div>
-                <p className="text-xl sm:text-2xl font-bold text-avb-blue">
+                <p className="text-lg sm:text-2xl font-bold text-avb-blue">
                   100%
                 </p>
-                <p className="text-xs text-slate-500 font-medium">A Medida</p>
-              </div>
+                <p className="text-[10px] sm:text-xs text-slate-500 font-medium leading-tight">
+                  A Medida</p>
+                </div>
               <div>
-                <p className="text-xl sm:text-2xl font-bold text-avb-blue">
+                <p className="text-lg sm:text-2xl font-bold text-avb-blue">
                   Templado
                 </p>
-                <p className="text-xs text-slate-500 font-medium">
+                <p className="text-[10px] sm:text-xs text-slate-500 font-medium leading-tight">
                   Vidrio de Seguridad
                 </p>
               </div>
               <div>
-                <p className="text-xl sm:text-2xl font-bold text-avb-blue">
+                <p className="text-lg sm:text-2xl font-bold text-avb-blue">
                   Garantía
                 </p>
-                <p className="text-xs text-slate-500 font-medium">
+                <p className="text-[10px] sm:text-xs text-slate-500 font-medium leading-tight">
                   Perfilería de Aluminio
                 </p>
               </div>

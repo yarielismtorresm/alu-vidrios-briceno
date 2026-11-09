@@ -16,7 +16,7 @@ export default function FiltrosCategoria({
             key={categoria}
             type="button"
             onClick={() => onSeleccionarCategoria(categoria)}
-            className={`cursor-pointer px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-200 select-none ${
+            className={`cursor-pointer px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-200 select-none ${
               estaActivo
                 ? "bg-avb-blue text-white shadow-sm ring-2 ring-avb-blue/20"
                 : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-100 hover:text-slate-900"

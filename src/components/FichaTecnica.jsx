@@ -51,8 +51,8 @@ export default function FichaTecnica({
     <div className="bg-white min-h-screen text-slate-800">
       {/* 1. Breadcrumbs limpios */}
       <div className="border-b border-slate-200 bg-slate-50/60">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
-          <nav aria-label="Ruta de navegación" className="flex items-center flex-wrap gap-1.5 font-medium text-slate-500">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+          <nav aria-label="Ruta de navegación" className="flex items-center flex-wrap gap-1.5 font-medium text-slate-500 text-[11px] sm:text-xs">
             <button
               onClick={onVolver}
               className="cursor-pointer hover:text-avb-blue transition-colors uppercase"
@@ -74,7 +74,7 @@ export default function FichaTecnica({
             </span>
           </nav>
 
-          <div className="flex items-center gap-4 text-slate-600 font-semibold text-[11px] tracking-wide uppercase">
+          <div className="flex items-center flex-wrap gap-3 sm:gap-4 text-slate-600 font-semibold text-[10px] sm:text-[11px] tracking-wide uppercase">
             <div className="flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-emerald-500" />
               <span>NORMA NCH 135 OF.2001</span>
@@ -183,7 +183,7 @@ export default function FichaTecnica({
                 <span className="text-avb-blue">{formatoSeleccionado}</span>
               </div>
 
-              <div className="grid grid-cols-2 gap-2.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-2.5">
                 {(
                   obra.formatos || [
                     { nombre: "80 x 190 cm", sub: "Espacio Compacto" },
@@ -224,7 +224,7 @@ export default function FichaTecnica({
                 ESPESOR & CALIDAD ÓPTICA
               </span>
 
-              <div className="grid grid-cols-2 gap-2.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-2.5">
                 {(
                   obra.espesores || [
                     "8MM TEMPLADO NCH135",
@@ -278,7 +278,7 @@ export default function FichaTecnica({
                 href={urlWhatsApp}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="cursor-pointer w-full inline-flex items-center justify-center gap-2 bg-avb-blue hover:bg-blue-800 text-white font-bold text-sm py-3.5 px-6 rounded-xl shadow-md hover:shadow-lg transition-all"
+                className="cursor-pointer w-full inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm py-3.5 px-6 rounded-xl shadow-md hover:shadow-lg transition-all"
               >
                 <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
                   <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z" />

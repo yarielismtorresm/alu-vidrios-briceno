@@ -27,16 +27,16 @@ export default function Navbar() {
               <img
                 src={logoAvb}
                 alt="Alu Vidrios Briceno"
-                className="h-10 w-auto object-contain rounded-lg"
+                className="h-8 sm:h-10 w-auto object-contain rounded-lg"
               />
             </div>
 
             {/* Texto de Identidad de Marca */}
-            <div className="flex flex-col">
-              <span className="text-xl font-bold tracking-tight text-avb-blue leading-tight">
+            <div className="flex flex-col min-w-0">
+              <span className="text-base sm:text-xl font-bold tracking-tight text-avb-blue leading-tight truncate">
                 Alu Vidrios Briceño
               </span>
-              <span className="text-xs uppercase tracking-wider text-slate-500 font-medium">
+              <span className="text-[10px] sm:text-xs uppercase tracking-wider text-slate-500 font-medium truncate">
                 Vidrio Templado y Aluminio
               </span>
             </div>
@@ -102,39 +102,39 @@ export default function Navbar() {
 
       {/* 4. Menú Desplegable Móvil con Animación Fluida */}
       <div
-        className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
+        className={`md:hidden transition-all duration-300 ease-in-out border-b border-slate-200 bg-white ${
           isOpen
-            ? "max-h-96 opacity-100 border-t border-slate-200"
-            : "max-h-0 opacity-0 border-t-0"
+            ? "max-h-96 opacity-100 py-4 px-4 sm:px-6"
+            : "max-h-0 opacity-0 overflow-hidden py-0 px-4"
         }`}
       >
-        <div className="bg-white px-4 pt-3 pb-6 space-y-3 shadow-lg">
-          <nav className="flex flex-col space-y-1">
+        <div className="flex flex-col gap-3">
             {navLinks.map((link) => (
               <a
                 key={link.name}
                 href={link.href}
                 onClick={() => setIsOpen(false)}
-                className="px-3 py-2.5 rounded-lg text-base font-medium text-slate-700 hover:text-avb-blue hover:bg-slate-50 transition-colors"
+                className="text-base font-medium text-slate-700 hover:text-avb-blue hover:bg-slate-50 px-3 py-2.5 rounded-lg transition-colors duration-200"
               >
                 {link.name}
               </a>
             ))}
-          </nav>
 
           {/* Botón CTA WhatsApp Móvil */}
-          <div className="pt-2">
             <a
               href={obtenerUrlWhatsAppAsesoria()}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-avb-blue hover:bg-blue-800 text-white text-xs font-bold px-4 py-2.5 rounded-lg shadow-sm transition-all duration-200 uppercase"
-              >
-              <span>Consultar por WhatsApp</span>
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setIsOpen(false)}
+              className="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-4 py-3 rounded-xl shadow-sm transition-all duration-200 mt-2 text-sm"
+            >
+              <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+              <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z" />
+            </svg>
+             <span>Consultar por WhatsApp</span>
             </a>
           </div>
         </div>
-      </div>
     </header>
   );
 }
