@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "nombre": "Norma Matheus",
+    "usuario": "admin",
+    "email": "norma.matheus@aluvidriosbriceno.com",
+    "rol": "Administrador",
+    "cargo": "Dirección Comercial & Presupuestos",
+    "activo": true,
+    "ultimoAcceso": "Sesión activa"
+  }
+]

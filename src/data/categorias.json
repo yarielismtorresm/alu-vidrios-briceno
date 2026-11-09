@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "nombre": "Puertas de Baño",
+    "descripcion": "Sistemas fijos, batientes y corredizos con vidrio templado de seguridad de 8mm y 10mm.",
+    "activa": true
+  },
+  {
+    "id": 2,
+    "nombre": "Ventanas Panorámicas",
+    "descripcion": "Líneas Serie 80 y muros cortina con doble vidriado hermético (DVH) para aislamiento acústico y térmico.",
+    "activa": true
+  },
+  {
+    "id": 3,
+    "nombre": "Espejos Flotantes & LED",
+    "descripcion": "Cristal belga libre de cobre con retroiluminación LED dual, sensor táctil y corte a medida.",
+    "activa": true
+  }
+]
