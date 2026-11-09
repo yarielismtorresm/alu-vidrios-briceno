@@ -7,22 +7,10 @@
     "descripcion": "Cerramiento fijo sin marco superior para ducha a ras de suelo y acceso libre. Confección milimétrica en taller con perfil perimetral empotrado o visto en acabado negro mate electroestático.",
     "imagen": "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1200&q=80",
     "imagenesDetalle": [
-      {
-        "url": "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1200&q=80",
-        "label": "Vista general"
-      },
-      {
-        "url": "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?auto=format&fit=crop&w=1200&q=80",
-        "label": "Tensor inox 304"
-      },
-      {
-        "url": "https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=1200&q=80",
-        "label": "Canto pulido CNC"
-      },
-      {
-        "url": "https://images.unsplash.com/photo-1620626011761-996317b8d101?auto=format&fit=crop&w=1200&q=80",
-        "label": "Anclaje a muro"
-      }
+      { "url": "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1200&q=80", "label": "Vista general" },
+      { "url": "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?auto=format&fit=crop&w=1200&q=80", "label": "Tensor inox 304" },
+      { "url": "https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=1200&q=80", "label": "Canto pulido CNC" },
+      { "url": "https://images.unsplash.com/photo-1620626011761-996317b8d101?auto=format&fit=crop&w=1200&q=80", "label": "Anclaje a muro" }
     ],
     "formatos": [
       { "nombre": "80 x 190 cm", "sub": "Espacio Compacto" },
@@ -32,11 +20,13 @@
     ],
     "espesores": ["8MM TEMPLADO NCH135", "10MM DIAMANT ANTI-CAL"],
     "especificaciones": {
-      "vidrio": "Templado Extra Claro 8mm / 10mm",
+      "vidrio": "Templado Extra Claro 8mm / 10mm (Norma NCh 135)",
       "perfileria": "Perfil Perimetral Negro Mate",
-      "acabado": "Electroestático Microtexturizado",
+      "acabado": "Electroestático Microtexturizado / Canto Pulido CNC",
       "instalacion": "Tensor Superior Inox 304 + Perfil U"
-    }
+    },
+    "activa": true,
+    "visible": true
   },
   {
     "id": 2,
@@ -46,18 +36,9 @@
     "descripcion": "Aislamiento termoacústico de alto desempeño con doble vidriado hermético y cierre multipunto para terrazas y balcones residenciales.",
     "imagen": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80",
     "imagenesDetalle": [
-      {
-        "url": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80",
-        "label": "Fachada exterior"
-      },
-      {
-        "url": "https://images.unsplash.com/photo-1600565193348-f74bd3c7ccdf?auto=format&fit=crop&w=1200&q=80",
-        "label": "Cierre multipunto"
-      },
-      {
-        "url": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=80",
-        "label": "Riel embutido"
-      }
+      { "url": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80", "label": "Fachada exterior" },
+      { "url": "https://images.unsplash.com/photo-1600565193348-f74bd3c7ccdf?auto=format&fit=crop&w=1200&q=80", "label": "Cierre multipunto" },
+      { "url": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=80", "label": "Riel embutido" }
     ],
     "formatos": [
       { "nombre": "200 x 220 cm", "sub": "2 Hojas Corredizas" },
@@ -71,7 +52,9 @@
       "perfileria": "Aluminio Serie 80 Europeo",
       "acabado": "Gris Antracita / Anodizado Mate",
       "instalacion": "Rodamientos de Acero Inoxidable Sellados"
-    }
+    },
+    "activa": true,
+    "visible": true
   },
   {
     "id": 3,
@@ -81,14 +64,8 @@
     "descripcion": "Espejo de cristal belga libre de cobre con retroiluminación perimetral LED dual (cálida/fría), sensor táctil regulable y lámina antivaho.",
     "imagen": "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1200&q=80",
     "imagenesDetalle": [
-      {
-        "url": "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1200&q=80",
-        "label": "Luz perimetral"
-      },
-      {
-        "url": "https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=1200&q=80",
-        "label": "Sensor touch"
-      }
+      { "url": "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1200&q=80", "label": "Luz perimetral" },
+      { "url": "https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=1200&q=80", "label": "Sensor touch" }
     ],
     "formatos": [
       { "nombre": "60 x 80 cm", "sub": "Formato Orgánico S" },
@@ -102,7 +79,9 @@
       "perfileria": "Chasis Posterior de Aluminio Oculto",
       "acabado": "Canto Pulido Diamante",
       "instalacion": "Fijación Flotante con Soporte Oculto"
-    }
+    },
+    "activa": true,
+    "visible": true
   },
   {
     "id": 4,
@@ -112,14 +91,8 @@
     "descripcion": "Sistema pivotante hidráulico oculto en suelo con palillería negra y cristal templado laminado de máxima atenuación acústica.",
     "imagen": "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=80",
     "imagenesDetalle": [
-      {
-        "url": "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=80",
-        "label": "Vista general"
-      },
-      {
-        "url": "https://images.unsplash.com/photo-1497215842964-222b430dc094?auto=format&fit=crop&w=1200&q=80",
-        "label": "Pivote hidráulico"
-      }
+      { "url": "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=80", "label": "Vista general" },
+      { "url": "https://images.unsplash.com/photo-1497215842964-222b430dc094?auto=format&fit=crop&w=1200&q=80", "label": "Pivote hidráulico" }
     ],
     "formatos": [
       { "nombre": "100 x 240 cm", "sub": "Paso Estándar Alto" },
@@ -132,7 +105,9 @@
       "perfileria": "Aluminio Negro Mate Microtexturado",
       "acabado": "Palillería Geométrica Sobrepuesta",
       "instalacion": "Caja de Freno Hidráulico en Piso"
-    }
+    },
+    "activa": true,
+    "visible": true
   },
   {
     "id": 5,
@@ -142,14 +117,8 @@
     "descripcion": "Perfil en U inferior embutido en losa sin postes intermedios para máxima transparencia y seguridad certificada para terrazas y balcones.",
     "imagen": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80",
     "imagenesDetalle": [
-      {
-        "url": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80",
-        "label": "Vista frontal"
-      },
-      {
-        "url": "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80",
-        "label": "Perfil embutido"
-      }
+      { "url": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80", "label": "Vista frontal" },
+      { "url": "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80", "label": "Perfil embutido" }
     ],
     "formatos": [
       { "nombre": "Por Metro Lineal (h=100cm)", "sub": "Altura Balcón" },
@@ -162,7 +131,9 @@
       "perfileria": "Perfil Base U Aluminio Estructural",
       "acabado": "Tapa Embellecedora Anodizada",
       "instalacion": "Anclaje Químico a Losa de Hormigón"
-    }
+    },
+    "activa": true,
+    "visible": true
   },
   {
     "id": 6,
@@ -172,10 +143,7 @@
     "descripcion": "Cuadrícula geométrica perimetral en aluminio negro mate con aislamiento acústico superior para divisiones de oficina y residencias.",
     "imagen": "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1200&q=80",
     "imagenesDetalle": [
-      {
-        "url": "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1200&q=80",
-        "label": "Vista corporativa"
-      }
+      { "url": "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1200&q=80", "label": "Vista corporativa" }
     ],
     "formatos": [
       { "nombre": "Módulo 200 x 240 cm", "sub": "Fijo + Batiente" },
@@ -188,57 +156,8 @@
       "perfileria": "Aluminio Estilo Loft Industrial",
       "acabado": "Negro Mate Microtexturado",
       "instalacion": "Fijación Perimetral con Sellado Acústico"
-    }
-  },
-  {
-    "id": 7,
-    "nombre": "Muro Cortina & Fachada Vidriada Continua",
-    "categoria": "Ventanas Panorámicas",
-    "linea": "LÍNEA FACHADAS COMERCIALES",
-    "descripcion": "Estructura autoportante de aluminio anodizado con cristales de control solar y reflectivo para edificios corporativos y locales comerciales.",
-    "imagen": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80",
-    "imagenesDetalle": [
-      {
-        "url": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80",
-        "label": "Vista angular"
-      }
-    ],
-    "formatos": [
-      { "nombre": "Módulo Estándar 120 x 300 cm", "sub": "Piel de Vidrio" },
-      { "nombre": "Diseño Libre en Terreno", "sub": "Cálculo Estructural" }
-    ],
-    "espesores": ["DVH 6 SOLAR/12/6 TEMPLADO", "LAMINADO ESTRUCTURAL 8+8"],
-    "especificaciones": {
-      "vidrio": "Cristal de Control Solar Low-E",
-      "perfileria": "Perfilería Estructural Stick / Frame",
-      "acabado": "Anodizado Natural Mate",
-      "instalacion": "Anclaje a Vigas de Hormigón Armado"
-    }
-  },
-  {
-    "id": 8,
-    "nombre": "Shower Door Corredizo Acero Inox 304",
-    "categoria": "Puertas de Baño",
-    "linea": "LÍNEA SHOWER DOORS PREMIUM",
-    "descripcion": "Sistema de corredera superior suspendida con rodamientos expuestos de acero inoxidable 304 y cristal templado de 10mm anti-sarro.",
-    "imagen": "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1200&q=80",
-    "imagenesDetalle": [
-      {
-        "url": "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1200&q=80",
-        "label": "Detalle rodamientos"
-      }
-    ],
-    "formatos": [
-      { "nombre": "120 x 195 cm", "sub": "Hoja Fija + Corredera" },
-      { "nombre": "150 x 200 cm", "sub": "Gran Formato Spa" },
-      { "nombre": "A Medida Libre", "sub": "Toma en Terreno" }
-    ],
-    "espesores": ["8MM TEMPLADO NCH135", "10MM TEMPLADO DIAMANT"],
-    "especificaciones": {
-      "vidrio": "Templado de Seguridad 10mm",
-      "perfileria": "Barra y Rodamientos de Acero Inox 304",
-      "acabado": "Inox Cepillado Satinado",
-      "instalacion": "Montaje a Muro Sólido con Sellado Sanitario"
-    }
+    },
+    "activa": true,
+    "visible": true
   }
 ]

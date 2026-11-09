@@ -9,7 +9,7 @@ import LoginAdmin from "./components/LoginAdmin";
 import ResumenAdmin from "./components/ResumenAdmin";
 import CatalogoGeneral from "./components/CatalogoGeneral";
 import productosData from "./data/productos.json";
-
+import categoriasData from "./data/categorias.json"
 
 // Categorías oficiales de Alu Vidrios Briceño con estado de activación
 const categoriasIniciales = [
@@ -51,7 +51,7 @@ function App() {
       // 2. Base de datos de Categorías con persistencia en localStorage
       const [listaCategorias, setListaCategorias] = useState(() => {
         const categoriasGuardadas = localStorage.getItem("avb_categorias_db");
-        return categoriasGuardadas ? JSON.parse(categoriasGuardadas) : categoriasIniciales;
+        return categoriasGuardadas ? JSON.parse(categoriasGuardadas) : categoriasData;
       });
 
       // Guardar automáticamente en la BD local cada vez que cambie una categoría o su switch
