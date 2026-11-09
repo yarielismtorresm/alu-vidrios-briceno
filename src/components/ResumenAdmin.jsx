@@ -4,18 +4,23 @@ import { WHATSAPP_CONFIG } from "../utils/whatsapp";
 import FormularioObra from "./FormularioObra";
 import FormularioCategoria from "./FormularioCategoria";
 import GestionUsuarios from "./GestionUsuarios";
+import FormularioUsuario from "./FormularioUsuario";
 
 // Abrir el modal y recibir props para crear/editar
 
 export default function ResumenAdmin({
   obras = [],
   categorias = [],
+  usuarios = [],
   onGuardarObra,
   onToggleCategoria,
   onGuardarCategoria,
+  onGuardarUsuario,
+  onToggleUsuario,
   onLogout,
   onVerSitioPublico,
 }) {
+
   // Estado para la opción seleccionada del menú lateral
   const [seccionActiva, setSeccionActiva] = useState("dashboard");
   const [menuMovilAbierto, setMenuMovilAbierto] = useState(false);
@@ -27,6 +32,10 @@ export default function ResumenAdmin({
   // Estados para Modal de Categoría
   const [modalCategoriaAbierto, setModalCategoriaAbierto] = useState(false);
   const [categoriaEnEdicion, setCategoriaEnEdicion] = useState(null);
+
+  // Estados para Modal de Usuario
+  const [modalUsuarioAbierto, setModalUsuarioAbierto] = useState(false);
+  const [usuarioEnEdicion, setUsuarioEnEdicion] = useState(null);
 
   // Estados de Búsqueda y Filtros en la vista de Catálogo
   const [busqueda, setBusqueda] = useState("");
@@ -752,7 +761,20 @@ export default function ResumenAdmin({
                   </div>
                 )}
               {/* VISTA 4: GESTIÓN DE USUARIOS Y ROLES (ISSUE #22) */}
-                {seccionActiva === "usuarios" && <GestionUsuarios />}
+              {seccionActiva === "usuarios" && (
+                   <GestionUsuarios
+                      usuarios={usuarios}
+                      onAbrirCrear={() => {
+                        setUsuarioEnEdicion(null);
+                        setModalUsuarioAbierto(true);
+                      }}
+                      onAbrirEditar={(user) => {
+                        setUsuarioEnEdicion(user);
+                        setModalUsuarioAbierto(true);
+                      }}
+                      onToggleEstado={onToggleUsuario}
+                    />
+                  )}
 
          </main>
       </div>
@@ -794,6 +816,25 @@ export default function ResumenAdmin({
                   }}
                 />
              )}
-          </div>
+
+            {/* MODAL PARA AGREGAR / EDITAR USUARIO */}
+                  {modalUsuarioAbierto && (
+                    <FormularioUsuario
+                      usuarioAEditar={usuarioEnEdicion}
+                      usuariosExistentes={usuarios}
+                      onCerrar={() => {
+                        setModalUsuarioAbierto(false);
+                        setUsuarioEnEdicion(null);
+                      }}
+                      onGuardar={(usuarioGuardado) => {
+                        if (onGuardarUsuario) {
+                          onGuardarUsuario(usuarioGuardado);
+                        }
+                        setModalUsuarioAbierto(false);
+                        setUsuarioEnEdicion(null);
+                      }}
+                    />
+                  )}
+              </div>
         );
       }

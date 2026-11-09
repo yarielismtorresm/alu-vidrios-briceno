@@ -1,36 +1,13 @@
 import { useState } from "react";
 
-// Datos iniciales de usuarios oficiales del equipo AVB
-const usuariosIniciales = [
-  {
-    id: 1,
-    nombre: "Norma Matheus",
-    usuario: "admin",
-    email: "norma.matheus@aluvidrios.com",
-    rol: "Administrador",
-    cargo: "Dirección Comercial & Gestión de Taller",
-    activo: true,
-    ultimoAcceso: "Sesión activa",
-  },
-];
-
-export default function GestionUsuarios() {
-  const [usuarios, setUsuarios] = useState(usuariosIniciales);
+export default function GestionUsuarios({
+  usuarios  = [],
+  onAbrirCrear,
+  onAbrirEditar,
+  onToggleEstado,
+  }) {
   const [busqueda, setBusqueda] = useState("");
   const [rolFiltro, setRolFiltro] = useState("Todos");
-
-  // Estados para el Modal de Crear / Editar Usuario
-  const [modalAbierto, setModalAbierto] = useState(false);
-  const [usuarioEnEdicion, setUsuarioEnEdicion] = useState(null);
-  const [formData, setFormData] = useState({
-    nombre: "",
-    usuario: "",
-    email: "",
-    rol: "Taller",
-    cargo: "",
-    activo: true,
-  });
-  const [errores, setErrores] = useState({});
 
   // Métricas calculadas en vivo
   const totalUsuarios = usuarios.length;
@@ -52,84 +29,6 @@ export default function GestionUsuarios() {
     return coincideRol && coincideTexto;
   });
 
-  // Alternar estado activo / inactivo
-  const handleToggleEstado = (id) => {
-    setUsuarios((prev) =>
-      prev.map((u) => (u.id === id ? { ...u, activo: !u.activo } : u))
-    );
-  };
-
-  // Abrir modal para crear
-  const handleAbrirCrear = () => {
-    setUsuarioEnEdicion(null);
-    setFormData({
-      nombre: "",
-      usuario: "",
-      email: "",
-      rol: "Taller",
-      cargo: "",
-      activo: true,
-    });
-    setErrores({});
-    setModalAbierto(true);
-  };
-
-  // Abrir modal para editar
-  const handleAbrirEditar = (user) => {
-    setUsuarioEnEdicion(user);
-    setFormData({
-      nombre: user.nombre,
-      usuario: user.usuario,
-      email: user.email,
-      rol: user.rol,
-      cargo: user.cargo,
-      activo: user.activo,
-    });
-    setErrores({});
-    setModalAbierto(true);
-  };
-
-  // Validar y Guardar Usuario
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const nuevosErrores = {};
-
-    if (!formData.nombre.trim()) nuevosErrores.nombre = "El nombre es obligatorio.";
-    if (!formData.usuario.trim()) nuevosErrores.usuario = "El usuario es obligatorio.";
-    if (!formData.email.trim()) {
-      nuevosErrores.email = "El correo es obligatorio.";
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      nuevosErrores.email = "Ingresa un correo electrónico válido.";
-    }
-    if (!formData.cargo.trim()) nuevosErrores.cargo = "El cargo o especialidad es obligatorio.";
-
-    if (Object.keys(nuevosErrores).length > 0) {
-      setErrores(nuevosErrores);
-      return;
-    }
-
-    if (usuarioEnEdicion) {
-      // Editar
-      setUsuarios((prev) =>
-        prev.map((u) =>
-          u.id === usuarioEnEdicion.id
-            ? { ...u, ...formData }
-            : u
-        )
-      );
-    } else {
-      // Crear
-      const nuevo = {
-        id: Date.now(),
-        ...formData,
-        ultimoAcceso: "Recién registrado",
-      };
-      setUsuarios((prev) => [nuevo, ...prev]);
-    }
-
-    setModalAbierto(false);
-  };
-
   return (
     <div className="space-y-6">
       {/* 1. Encabezado y Botón Nuevo Usuario */}
@@ -149,7 +48,7 @@ export default function GestionUsuarios() {
 
         <button
           type="button"
-          onClick={handleAbrirCrear}
+          onClick={onAbrirCrear}
           className="cursor-pointer bg-avb-blue hover:bg-blue-800 text-white text-xs sm:text-sm font-bold px-4 py-2.5 rounded-xl flex items-center justify-center gap-2 transition-all shadow-md shadow-blue-900/20"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -320,7 +219,7 @@ export default function GestionUsuarios() {
                             type="button"
                             role="switch"
                             aria-checked={user.activo}
-                            onClick={() => handleToggleEstado(user.id)}
+                            onClick={() => onToggleEstado  && onToggleEstado(user.id)}
                             className={`cursor-pointer relative inline-flex h-5 w-10 shrink-0 items-center rounded-full transition-colors duration-200 focus:outline-hidden ${
                               user.activo ? "bg-emerald-500" : "bg-slate-300"
                             }`}
@@ -345,7 +244,7 @@ export default function GestionUsuarios() {
                       <td className="py-4 px-5 text-right">
                         <button
                           type="button"
-                          onClick={() => handleAbrirEditar(user)}
+                          onClick={() => onAbrirEditar && onAbrirEditar(user)}
                           className="cursor-pointer text-xs font-bold text-avb-blue hover:text-blue-800 bg-blue-50 hover:bg-blue-100 border border-blue-200 px-3 py-1.5 rounded-lg transition-colors"
                         >
                           Editar
@@ -365,157 +264,6 @@ export default function GestionUsuarios() {
           </table>
         </div>
       </div>
-
-      {/* 5. MODAL PARA CREAR / EDITAR USUARIO */}
-      {modalAbierto && (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 animate-in fade-in zoom-in-95 duration-150">
-            {/* Cabecera */}
-            <div className="flex items-center justify-between pb-4 border-b border-slate-100 mb-5">
-              <div>
-                <span className="text-[11px] font-extrabold uppercase tracking-widest text-avb-blue">
-                  {usuarioEnEdicion ? "Edición de Acceso" : "Nuevo Integrante"}
-                </span>
-                <h3 className="text-lg font-bold text-slate-900">
-                  {usuarioEnEdicion ? `Editar: ${usuarioEnEdicion.nombre}` : "Registrar Usuario"}
-                </h3>
-              </div>
-              <button
-                type="button"
-                onClick={() => setModalAbierto(false)}
-                className="cursor-pointer text-slate-400 hover:text-slate-700 p-1.5 rounded-xl hover:bg-slate-100"
-              >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-
-            {/* Formulario */}
-            <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Nombre Completo *
-                </label>
-                <input
-                  type="text"
-                  value={formData.nombre}
-                  onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
-                  placeholder="Ej: Norma Matheus"
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm focus:ring-2 focus:ring-avb-blue outline-hidden"
-                />
-                {errores.nombre && (
-                  <p className="text-[11px] font-medium text-rose-600 mt-1">⚠ {errores.nombre}</p>
-                )}
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Usuario *
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.usuario}
-                    onChange={(e) => setFormData({ ...formData, usuario: e.target.value })}
-                    placeholder="Ej: norma.matheus"
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm focus:ring-2 focus:ring-avb-blue outline-hidden"
-                  />
-                  {errores.usuario && (
-                    <p className="text-[11px] font-medium text-rose-600 mt-1">⚠ {errores.usuario}</p>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Rol en el Sistema *
-                  </label>
-                  <select
-                    value={formData.rol}
-                    onChange={(e) => setFormData({ ...formData, rol: e.target.value })}
-                    className="cursor-pointer w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-avb-blue outline-hidden"
-                  >
-                    <option value="Administrador">Administrador (Total)</option>
-                    <option value="Taller">Taller (Operativo)</option>
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Correo Electrónico *
-                </label>
-                <input
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  placeholder="Ej: usuario@aluvidrios.com"
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm focus:ring-2 focus:ring-avb-blue outline-hidden"
-                />
-                {errores.email && (
-                  <p className="text-[11px] font-medium text-rose-600 mt-1">⚠ {errores.email}</p>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Cargo / Especialidad Técnica *
-                </label>
-                <input
-                  type="text"
-                  value={formData.cargo}
-                  onChange={(e) => setFormData({ ...formData, cargo: e.target.value })}
-                  placeholder="Ej: Maestro Vidriero & Corte CNC"
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm focus:ring-2 focus:ring-avb-blue outline-hidden"
-                />
-                {errores.cargo && (
-                  <p className="text-[11px] font-medium text-rose-600 mt-1">⚠ {errores.cargo}</p>
-                )}
-              </div>
-
-              <div className="flex items-center justify-between p-3.5 bg-slate-50 rounded-2xl border border-slate-200">
-                <div>
-                  <span className="text-xs font-bold text-slate-800 block">Estado del Acceso</span>
-                  <span className="text-[11px] text-slate-500">
-                    {formData.activo ? "Permite iniciar sesión en el panel" : "Acceso bloqueado"}
-                  </span>
-                </div>
-                <button
-                  type="button"
-                  role="switch"
-                  aria-checked={formData.activo}
-                  onClick={() => setFormData({ ...formData, activo: !formData.activo })}
-                  className={`cursor-pointer relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors ${
-                    formData.activo ? "bg-emerald-500" : "bg-slate-300"
-                  }`}
-                >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-md transition ${
-                      formData.activo ? "translate-x-6" : "translate-x-1"
-                    }`}
-                  />
-                </button>
-              </div>
-
-              <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={() => setModalAbierto(false)}
-                  className="cursor-pointer px-4 py-2 rounded-xl border border-slate-300 text-slate-700 text-xs font-semibold hover:bg-slate-100"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  className="cursor-pointer px-5 py-2 rounded-xl bg-avb-blue hover:bg-blue-800 text-white text-xs font-bold shadow-md shadow-blue-900/20"
-                >
-                  {usuarioEnEdicion ? "Guardar Cambios" : "Crear Usuario"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
