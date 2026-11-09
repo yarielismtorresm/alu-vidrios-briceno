@@ -7,6 +7,7 @@ import FiltrosCategoria from "./components/FiltrosCategoria";
 import FichaTecnica from "./components/FichaTecnica";
 import LoginAdmin from "./components/LoginAdmin";
 import ResumenAdmin from "./components/ResumenAdmin";
+import CatalogoGeneral from "./components/CatalogoGeneral";
 
 // Catálogo de obras oficiales AVB (Sin referencias ni SKUs)
 const obrasEjemplo = [
@@ -387,55 +388,18 @@ function App() {
       <Hero />
 
       {/* 4. Sección Catálogo de Obras */}
-      <main
-        id="catalogo"
-        className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-16"
-      >
-        {/* Encabezado del Catálogo */}
-        <div className="text-center max-w-2xl mx-auto mb-12">
-          <span className="text-xs uppercase tracking-widest font-bold text-avb-blue bg-blue-50 px-3 py-1 rounded-full border border-blue-200">
-            Portafolio de Obras
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-bold text-slate-800 mt-3 mb-3">
-            Obras Arquitectónicas a Medida
-          </h2>
-          <p className="text-slate-600 text-sm sm:text-base">
-            Explora nuestras soluciones en vidrio templado y aluminio fabricadas
-            según las especificaciones de cada proyecto.
-          </p>
-        </div>
-
-        {/* 4. Filtro de Categorías */}
-        <FiltrosCategoria
-          categorias={nombreCategoriasPublicas}
-          categoriaSeleccionada={categoriaSeleccionada}
-          onSeleccionarCategoria={setCategoriaSeleccionada}
-        />
-
-        {/* Cuadrícula Responsiva de Cards */}
-        {obrasFiltradas.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {obrasFiltradas.map((obra) => (
-              <CardProducto
-                key={obra.id}
-                obra={obra}
-                onVerDetalle={setObraSeleccionada}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-12 bg-white rounded-2xl border border-slate-200">
-            <p className="text-slate-500 text-sm">
-              No se encontraron obras disponibles en esta categoría.
-            </p>
-          </div>
-        )}
-      </main>
+      {/* 4. Sección Catálogo General de Obras (Issue #19) */}
+      <CatalogoGeneral
+        obras={obrasVisiblesPublico}
+        categorias={nombreCategoriasPublicas}
+        categoriaSeleccionada={categoriaSeleccionada}
+        onSeleccionarCategoria={setCategoriaSeleccionada}
+        onVerDetalle={setObraSeleccionada}
+      />
     </>
-          )}
+  )}
 
-
-          {/* 3. Footer Institucional */}
+  {/* 3. Footer Institucional */}
           <Footer />
         </div>
       );
