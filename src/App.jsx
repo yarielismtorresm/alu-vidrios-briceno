@@ -10,6 +10,7 @@ import ResumenAdmin from "./components/ResumenAdmin";
 import CatalogoGeneral from "./components/CatalogoGeneral";
 import productosData from "./data/productos.json";
 import categoriasData from "./data/categorias.json"
+import usuariosData from "./data/usuarios.json"
 
 // Categorías oficiales de Alu Vidrios Briceño con estado de activación
 const categoriasIniciales = [
@@ -43,29 +44,39 @@ function App() {
         return obrasGuardadas ? JSON.parse(obrasGuardadas) : productosData;
       });
 
-      // Guardar automáticamente en la BD local cada vez que se cree o edite una obra
+  // Guardar automáticamente en la BD local cada vez que se cree o edite una obra
       useEffect(() => {
         localStorage.setItem("avb_obras_db", JSON.stringify(listaObras));
       }, [listaObras]);
 
-      // 2. Base de datos de Categorías con persistencia en localStorage
+  // 2. Base de datos de Categorías con persistencia en localStorage
       const [listaCategorias, setListaCategorias] = useState(() => {
         const categoriasGuardadas = localStorage.getItem("avb_categorias_db");
         return categoriasGuardadas ? JSON.parse(categoriasGuardadas) : categoriasData;
       });
 
-      // Guardar automáticamente en la BD local cada vez que cambie una categoría o su switch
+  // Guardar automáticamente en la BD local cada vez que cambie una categoría o su switch
       useEffect(() => {
         localStorage.setItem("avb_categorias_db", JSON.stringify(listaCategorias));
       }, [listaCategorias]);
 
-  // 3. Estado para la categoría seleccionada
+  // 3. Base de datos de Usuarios con persistencia en localStorage
+      const [listaUsuarios, setListaUsuarios] = useState(() => {
+        const usuariosGuardados = localStorage.getItem("avb_usuarios_db");
+        return usuariosGuardados ? JSON.parse(usuariosGuardados) : usuariosData;
+      });
+
+      useEffect(() => {
+        localStorage.setItem("avb_usuarios_db", JSON.stringify(listaUsuarios));
+      }, [listaUsuarios]);
+
+  // 4. Estado para la categoría seleccionada
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState("Todas");
 
-  // 4. Estado para la obra actualmente abierta en el Modal de Ficha Técnica
+  // 5. Estado para la obra actualmente abierta en el Modal de Ficha Técnica
   const [obraSeleccionada, setObraSeleccionada] = useState(null)
 
-  // 5. Nombres de categorías activas para los filtros del sitio público
+  // 6. Nombres de categorías activas para los filtros del sitio público
   const nombreCategoriasPublicas = [
     "Todas",
     ...listaCategorias.filter((cat) => cat.activa).map((cat) => cat.nombre),
@@ -75,7 +86,7 @@ function App() {
     setObraSeleccionada(null);
   };
 
-  // 6. Filtrar obras Filtrar obras visibles al público (solo de categorías con estado activo)
+  // 7. Filtrar obras Filtrar obras visibles al público (solo de categorías con estado activo)
   const obrasVisiblesPublico = listaObras.filter((obra) => {
       const categoriaObj = listaCategorias.find(
         (c) => c.nombre.toLowerCase() === obra.categoria.toLowerCase()
@@ -90,12 +101,12 @@ function App() {
             (obra) => obra.categoria === categoriaSeleccionada
           );
 
-  // 7. Detección automática si la URL es /admin o #admin
+  // 8. Detección automática si la URL es /admin o #admin
   const [esRutaAdmin, setEsRutaAdmin] = useState(
     window.location.pathname === "/admin" || window.location.hash === "#admin"
   );
 
-  // 8. Manejador para agregar o editar obras en tiempo real
+  // 9. Manejador para agregar o editar obras en tiempo real
   const handleGuardarObra = (obraActualizada) => {
     setListaObras((prev) => {
       const existe = prev.some((o) => o.id === obraActualizada.id);
@@ -106,7 +117,7 @@ function App() {
     });
   };
 
-  // 9. Manejadores para Categorías (Switch de estado y Crear/Editar)
+  // 10. Manejadores para Categorías (Switch de estado y Crear/Editar)
     const handleToggleEstadoCategoria = (idCategoria) => {
       setListaCategorias((prev) =>
         prev.map((cat) =>
@@ -123,6 +134,24 @@ function App() {
         }
         return [...prev, categoriaData];
       });
+    };
+
+    const handleGuardarUsuario = (usuarioActualizado) => {
+      setListaUsuarios((prev) => {
+        const existe = prev.some((u) => u.id === usuarioActualizado.id);
+        if (existe) {
+          return prev.map((u) =>
+            u.id === usuarioActualizado.id ? usuarioActualizado : u
+          );
+        }
+        return [usuarioActualizado, ...prev];
+      });
+    };
+
+    const handleToggleEstadoUsuario = (id) => {
+      setListaUsuarios((prev) =>
+        prev.map((u) => (u.id === id ? { ...u, activo: !u.activo } : u))
+      );
     };
 
   // Estado estaAutenticado
@@ -163,10 +192,13 @@ function App() {
   return (
    <ResumenAdmin
      obras={listaObras}
-     categorias={listaCategorias}
+      categorias={listaCategorias}
+      usuarios={listaUsuarios}
      onGuardarObra={handleGuardarObra}
      onToggleCategoria={handleToggleEstadoCategoria}
      onGuardarCategoria={handleGuardarCategoria}
+     onGuardarUsuario={handleGuardarUsuario}
+     onToggleUsuario={handleToggleEstadoUsuario}
      onLogout={() => {
             localStorage.removeItem("avb_admin_auth");
             setEstaAutenticado(false);
