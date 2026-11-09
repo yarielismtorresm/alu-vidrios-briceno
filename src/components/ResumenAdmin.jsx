@@ -3,6 +3,7 @@ import logoAvb from "../assets/logo-avb.png";
 import { WHATSAPP_CONFIG } from "../utils/whatsapp";
 import FormularioObra from "./FormularioObra";
 import FormularioCategoria from "./FormularioCategoria";
+import GestionUsuarios from "./GestionUsuarios";
 
 // Abrir el modal y recibir props para crear/editar
 
@@ -750,6 +751,8 @@ export default function ResumenAdmin({
                     </div>
                   </div>
                 )}
+              {/* VISTA 4: GESTIÓN DE USUARIOS Y ROLES (ISSUE #22) */}
+                {seccionActiva === "usuarios" && <GestionUsuarios />}
 
          </main>
       </div>
